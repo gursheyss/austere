@@ -7,21 +7,25 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 )
 
-func ConnectToAWS(ctx context.Context) error {
+func ConnectToSQS(ctx context.Context) (*sqs.Client, error) {
 	accessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
 	secretAccessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
 
-	_, err := config.LoadDefaultConfig(ctx,
+	cfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion("us-east-1"),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, "")),
 	)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 
-	log.Println("Successfully connected to AWS")
+	sqsClient := sqs.NewFromConfig(cfg)
 
-	return nil
+	log.Println("Successfully connected to AWS and created SQS client")
+
+	return sqsClient, nil
 }
