@@ -9,7 +9,8 @@ import (
 func StartServer() {
 	port := tools.EnvPortOr("3001")
 	e := echo.New()
+	e.Validator = NewValidator()
 	e.GET("/", HelloWorldHandler)
-	e.GET("/upload", UploadHandler)
+	e.POST("/upload", UploadHandler)
 	e.Logger.Fatal(e.Start(port))
 }

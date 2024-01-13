@@ -3,10 +3,19 @@ package server
 import (
 	"austere/internal/aws"
 	"context"
+	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
+
+type BodyParams struct {
+	URL    string `form:"url" validate:"required,url"`
+	Title  string `form:"title"`
+	Album  string `form:"album"`
+	Artist string `form:"artist"`
+}
 
 func HelloWorldHandler(c echo.Context) error {
 	return c.String(http.StatusOK, "hey lol")
@@ -14,6 +23,17 @@ func HelloWorldHandler(c echo.Context) error {
 
 func UploadHandler(c echo.Context) error {
 	ctx := context.TODO()
+	params := new(BodyParams)
+	if err := c.Bind(params); err != nil {
+		return err
+	}
+	if err := c.Validate(params); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			return c.String(http.StatusBadRequest, ValidationError{errs}.Error())
+		}
+		return err
+	}
+	fmt.Println(params)
 	aws.ConnectToSQS(ctx)
 	return c.String(http.StatusOK, "hey lol2")
 }
