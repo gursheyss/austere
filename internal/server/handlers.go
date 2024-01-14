@@ -1,8 +1,7 @@
 package server
 
 import (
-	"austere/internal/aws"
-	"context"
+	"austere/ytdlp"
 	"fmt"
 	"net/http"
 
@@ -22,7 +21,6 @@ func HelloWorldHandler(c echo.Context) error {
 }
 
 func UploadHandler(c echo.Context) error {
-	ctx := context.TODO()
 	params := new(BodyParams)
 	if err := c.Bind(params); err != nil {
 		return err
@@ -34,6 +32,6 @@ func UploadHandler(c echo.Context) error {
 		return err
 	}
 	fmt.Println(params)
-	aws.ConnectToSQS(ctx)
+	ytdlp.Download()
 	return c.String(http.StatusOK, "hey lol2")
 }
