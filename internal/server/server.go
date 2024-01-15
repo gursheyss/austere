@@ -7,7 +7,7 @@ import (
 )
 
 func StartServer() {
-	port := tools.EnvPortOr("3001")
+	port := tools.EnvPortOr("3002")
 	e := echo.New()
 	e.GET("/", HelloWorldHandler)
 	e.Logger.Fatal(e.Start(port))
