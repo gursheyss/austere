@@ -9,20 +9,21 @@ import (
 
 func Download(params *models.BodyParams) error {
 	metadata := createMetadata(params)
+	outputString := createOutput(params)
 
 	cmd := exec.Command("yt-dlp", params.URL, "-x", "--audio-format", "mp3", "--add-metadata",
 		"--parse-metadata", "artist:%(artist||uploader)s",
 		"--parse-metadata", "title:%(title)s",
-		"--parse-metadata", "album:%(album)s",
-		"--replace-in-metadata", "album:NA=%(title)s",
+		"--parse-metadata", "album:%(album||title)s",
 		"--ppa", "ThumbnailsConvertor+ffmpeg_o:-c:v png -vf crop='ih'",
 		"--ppa", "Metadata:"+metadata,
 		"--embed-thumbnail",
+		"-o", outputString,
 	)
 
-	output, err := executeCommand(cmd)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println("Error executing yt-dlp:", err)
+		log.Printf("Error executing yt-dlp: %v", err)
 		return err
 	}
 
@@ -31,6 +32,7 @@ func Download(params *models.BodyParams) error {
 }
 
 func createMetadata(params *models.BodyParams) string {
+	// the year still doesnt work idk y
 	metadata := []string{
 		"-metadata Track=\"\"",
 		"-metadata Year=\"\"",
@@ -39,22 +41,32 @@ func createMetadata(params *models.BodyParams) string {
 	}
 
 	if params.Title != "" {
-		metadata = append(metadata, "-metadata Title=\""+params.Title+"\"")
+		metadata = append(metadata, "-metadata title=\""+params.Title+"\"")
 	}
 	if params.Album != "" {
-		metadata = append(metadata, "-metadata Album=\""+params.Album+"\"")
+		metadata = append(metadata, "-metadata album=\""+params.Album+"\"")
 	}
 	if params.Artist != "" {
-		metadata = append(metadata, "-metadata Artist=\""+params.Artist+"\"")
+		metadata = append(metadata, "-metadata artist=\""+params.Artist+"\"")
 	}
 
 	return strings.Join(metadata, " ")
 }
 
-func executeCommand(cmd *exec.Cmd) ([]byte, error) {
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, err
+func createOutput(params *models.BodyParams) string {
+	artist := "%(uploader)s"
+	album := "%(album)s"
+	title := "%(title)s"
+
+	if params.Artist != "" {
+		artist = params.Artist
 	}
-	return output, nil
+	if params.Album != "" {
+		album = params.Album
+	}
+	if params.Title != "" {
+		title = params.Title
+	}
+
+	return artist + "/" + album + "/" + title + ".%(ext)s"
 }
