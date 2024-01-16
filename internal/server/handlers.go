@@ -15,17 +15,21 @@ func HelloWorldHandler(c echo.Context) error {
 }
 
 func UploadHandler(c echo.Context) error {
-	params := new(models.BodyParams)
-	if err := c.Bind(params); err != nil {
+	params := make([]models.BodyParams, 0)
+	if err := c.Bind(&params); err != nil {
 		return err
 	}
-	if err := c.Validate(params); err != nil {
-		if errs, ok := err.(validator.ValidationErrors); ok {
-			return c.String(http.StatusBadRequest, ValidationError{errs}.Error())
+
+	v := validator.New()
+	for _, param := range params {
+		if err := v.Struct(param); err != nil {
+			if errs, ok := err.(validator.ValidationErrors); ok {
+				return c.String(http.StatusBadRequest, ValidationError{errs}.Error())
+			}
+			return err
 		}
-		return err
+		fmt.Println(param)
+		ytdlp.Download(&param)
 	}
-	fmt.Println(params)
-	ytdlp.Download(params)
 	return c.String(http.StatusOK, "hey lol2")
 }

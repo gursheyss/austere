@@ -5,4 +5,5 @@ type BodyParams struct {
 	Artist string
 	Title  string
 	Album  string
+	Cover  string
 }

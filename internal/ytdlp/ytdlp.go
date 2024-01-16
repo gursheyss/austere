@@ -17,7 +17,6 @@ func Download(params *models.BodyParams) error {
 		"--parse-metadata", "album:%(album||title)s",
 		"--ppa", "ThumbnailsConvertor+ffmpeg_o:-c:v png -vf crop='ih'",
 		"--ppa", "Metadata:"+metadata,
-		"--embed-thumbnail",
 		"-o", outputString,
 	)
 
@@ -68,5 +67,5 @@ func createOutput(params *models.BodyParams) string {
 		title = params.Title
 	}
 
-	return artist + "/" + album + "/" + title + ".%(ext)s"
+	return "./output/" + artist + "/" + album + "/" + title + ".%(ext)s"
 }

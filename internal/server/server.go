@@ -7,7 +7,7 @@ import (
 )
 
 func StartServer() {
-	port := tools.EnvPortOr("3002")
+	port := tools.EnvPortOr("3001")
 	e := echo.New()
 	e.Validator = NewValidator()
 	e.GET("/", HelloWorldHandler)
