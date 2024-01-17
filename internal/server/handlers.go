@@ -20,6 +20,10 @@ func UploadHandler(c echo.Context) error {
 		return err
 	}
 
+	if len(params) == 0 {
+		return c.String(http.StatusBadRequest, "No params provided")
+	}
+
 	v := validator.New()
 	for _, param := range params {
 		if err := v.Struct(param); err != nil {
