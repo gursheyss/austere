@@ -1,6 +1,7 @@
 package ytdlp
 
 import (
+	"austere/internal/krakenfiles"
 	"austere/internal/models"
 	"log"
 	"os/exec"
@@ -8,26 +9,35 @@ import (
 )
 
 func Download(params *models.BodyParams) error {
-	metadata := createMetadata(params)
-	outputString := createOutput(params)
+    metadata := createMetadata(params)
+    outputString := createOutput(params)
+    url := params.URL
 
-	cmd := exec.Command("yt-dlp", params.URL, "-x", "--audio-format", "mp3", "--add-metadata",
-		"--parse-metadata", "artist:%(artist||uploader)s",
-		"--parse-metadata", "title:%(title)s",
-		"--parse-metadata", "album:%(album||title)s",
-		"--ppa", "ThumbnailsConvertor+ffmpeg_o:-c:v png -vf crop='ih'",
-		"--ppa", "Metadata:"+metadata,
-		"-o", outputString,
-	)
+    if strings.Contains(url, "krakenfiles.com") {
+        var err error
+        url, err = krakenfiles.Convert(url)
+        if err != nil {
+            return err
+        }
+    }
 
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Error executing yt-dlp: %v", err)
-		return err
-	}
+    cmd := exec.Command("yt-dlp", url, "-x", "--audio-format", "mp3", "--add-metadata",
+        "--parse-metadata", "artist:%(artist||uploader)s",
+        "--parse-metadata", "title:%(title)s",
+        "--parse-metadata", "album:%(album||title)s",
+        "--ppa", "ThumbnailsConvertor+ffmpeg_o:-c:v png -vf crop='ih'",
+        "--ppa", "Metadata:"+metadata,
+        "-o", outputString,
+    )
 
-	log.Println(string(output))
-	return nil
+    output, err := cmd.CombinedOutput()
+    if err != nil {
+        log.Printf("Error executing yt-dlp: %v", err)
+        return err
+    }
+
+    log.Println(string(output))
+    return nil
 }
 
 func createMetadata(params *models.BodyParams) string {
