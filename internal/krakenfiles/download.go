@@ -17,7 +17,7 @@ type ApiResponse struct {
     Url    string `json:"url"`
 }
 
-func Convert(urlStr string) (string, error) {
+func ExtractDownloadURL(urlStr string) (string, error) {
     formAction, token, err := extractFormData(urlStr)
     if err != nil {
         return "", err

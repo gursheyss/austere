@@ -15,7 +15,7 @@ func Download(params *models.BodyParams) error {
 
     if strings.Contains(url, "krakenfiles.com") {
         var err error
-        url, err = krakenfiles.Convert(url)
+        url, err = krakenfiles.ExtractDownloadURL(url)
         if err != nil {
             return err
         }
