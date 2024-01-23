@@ -63,19 +63,19 @@ func createMetadata(params *models.BodyParams) string {
 }
 
 func createOutput(params *models.BodyParams) string {
-	artist := "%(uploader)s"
-	album := "%(album)s"
-	title := "%(title)s"
+    artist := "%(uploader)s"
+    album := "%(album)s"
+    title := "%(title)s"
 
-	if params.Artist != "" {
-		artist = params.Artist
-	}
-	if params.Album != "" {
-		album = params.Album
-	}
-	if params.Title != "" {
-		title = params.Title
-	}
+    if params.Artist != "" {
+        artist = params.Artist
+    }
+    if params.Album != "" {
+        album = params.Album
+    }
+    if params.Title != "" {
+        title = params.Title
+    }
 
-	return "./output/" + artist + "/" + album + "/" + title + ".%(ext)s"
+    return "/app/Music/" + artist + "/" + album + "/" + title + ".%(ext)s"
 }

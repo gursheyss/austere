@@ -14,13 +14,15 @@ services:
       target: final
     ports:
       - 3001:3001
+    volumes:
+      - /mnt/external/Music:/app/Music # change the left side of the colon to the path to your music folder
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - 9090:9090
 
@@ -28,7 +30,6 @@ services:
     image: grafana/grafana
     ports:
       - 3000:3000
-      
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
 # start the database before your application. The `db-data` volume persists the
