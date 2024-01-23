@@ -50,8 +50,16 @@ RUN --mount=type=cache,target=/var/cache/apk \
     apk --update add \
         ca-certificates \
         tzdata \
+        git \
         && \
         update-ca-certificates
+
+# install yt-dlp
+RUN apk add --no-cache ffmpeg bash python3 py3-pip && \
+    python3 -m venv /yt-dlp-env && \
+    . /yt-dlp-env/bin/activate && \
+    pip install --upgrade git+https://github.com/yt-dlp/yt-dlp.git@release && \
+    ln -s /yt-dlp-env/bin/yt-dlp /usr/local/bin/yt-dlp
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
