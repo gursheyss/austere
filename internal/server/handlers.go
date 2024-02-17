@@ -33,17 +33,21 @@ func UploadHandler(c echo.Context) error {
 
     v := validator.New()
     for _, param := range params {
-        if err := v.Struct(param); err != nil {
-            if errs, ok := err.(validator.ValidationErrors); ok {
-                prometheus.FailedUploadsCounter.Inc()
-                return c.String(http.StatusBadRequest, ValidationError{errs}.Error())
-            }
+    if err := v.Struct(param); err != nil {
+        if errs, ok := err.(validator.ValidationErrors); ok {
             prometheus.FailedUploadsCounter.Inc()
-            return err
+            return c.String(http.StatusBadRequest, ValidationError{errs}.Error())
         }
-        fmt.Println(param)
-        ytdlp.Download(&param)
+        prometheus.FailedUploadsCounter.Inc()
+        return err
     }
+    fmt.Println(param)
+    err := ytdlp.Download(&param)
+    if err != nil {
+        prometheus.FailedUploadsCounter.Inc()
+        return err
+    }
+}
 
     prometheus.UploadDuration.Observe(time.Since(startTime).Seconds())
     return c.String(http.StatusOK, "hey lol2")
