@@ -4,6 +4,7 @@ import (
 	"austere/internal/krakenfiles"
 	"austere/internal/models"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -30,13 +31,15 @@ func Download(params *models.BodyParams) error {
         "-o", outputString,
     )
 
-    output, err := cmd.CombinedOutput()
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    err := cmd.Run()
     if err != nil {
         log.Printf("Error executing yt-dlp: %v", err)
         return err
     }
 
-    log.Println(string(output))
     return nil
 }
 
