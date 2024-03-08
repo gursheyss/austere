@@ -26,6 +26,7 @@ func Download(params *models.BodyParams) error {
         "--parse-metadata", "artist:%(artist||uploader)s",
         "--parse-metadata", "title:%(title)s",
         "--parse-metadata", "album:%(album||title)s",
+        "--embed-thumbnail",
         "--ppa", "ThumbnailsConvertor+ffmpeg_o:-c:v png -vf crop='ih'",
         "--ppa", "Metadata:"+metadata,
         "-o", outputString,
@@ -80,5 +81,5 @@ func createOutput(params *models.BodyParams) string {
         title = params.Title
     }
 
-    return "/app/Music/" + artist + "/" + album + "/" + title + ".%(ext)s"
+    return "/home/gursh/Music/" + artist + "/" + album + "/" + title + ".%(ext)s"
 }
