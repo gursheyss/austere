@@ -81,5 +81,5 @@ func createOutput(params *models.BodyParams) string {
         title = params.Title
     }
 
-    return "/home/gursh/Music/" + artist + "/" + album + "/" + title + ".%(ext)s"
+    return "app/Music/" + artist + "/" + album + "/" + title + ".%(ext)s"
 }
