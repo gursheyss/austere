@@ -10,9 +10,7 @@ Supported Sites:
 
 Austere uses `yt-dlp` to download media from supported sites (and a custom solution for Krakenfiles).
 
-## Prerequisites
-
-## Local Setup
+### Local Setup
 
 To get started with the setup, clone the repository and navigate into the directory using the following commands:
 
@@ -33,7 +31,7 @@ To run the application, run:
 go run main.go
 ```
 
-## Deployment
+### Deployment
 
 To prepare the application for deployment, build the application with:
 
